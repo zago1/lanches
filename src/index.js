@@ -6,16 +6,22 @@
  * @flow
  */
 
-import React from "react";
-import { SafeAreaView, StatusBar } from "react-native";
+import React from 'react';
+import { SafeAreaView, StatusBar } from 'react-native';
+import { Provider } from 'react-redux';
 
-import AppContainer from "./routes";
+import store from './store';
+
+import AppContainer from './routes';
+import { setNavigator } from './services/navigation';
 
 const App = () => (
-  <SafeAreaView style={{ flex: 1 }}>
-    <StatusBar backgroundColor="#D84315" barStyle="light-content" />
-    <AppContainer />
-  </SafeAreaView>
+  <Provider store={store}>
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar backgroundColor="#D84315" barStyle="light-content" />
+      <AppContainer ref={setNavigator} />
+    </SafeAreaView>
+  </Provider>
 );
 
 export default App;

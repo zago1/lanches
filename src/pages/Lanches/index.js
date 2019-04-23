@@ -1,98 +1,56 @@
-import React, { Component } from "react";
-import { View, FlatList, Alert, ActivityIndicator } from "react-native";
+import React, { Component } from 'react';
+import { View, FlatList, ActivityIndicator } from 'react-native';
 
-import api from "../../services/api";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import Item from "../../components/Item";
-//import { dataLanches, ingredientes } from "../../data";
+import PropTypes from 'prop-types';
 
-import styles from "./styles";
+import Item from '../../components/Item';
 
-export default class Lanches extends Component {
-  state = {
-    lanches: [
-      {
-        id: 999,
-        title: "Monte seu lanche",
-        description: "Escolha todos os ingredientes que desejar.",
-        price: 0.0
-      }
-    ],
-    ingredientes: [],
-    lancheSelecionado: {
-      id: 0,
-      title: "",
-      description: "",
-      price: 0,
-      ingredientes: [0]
-    },
-    loading: false
+import * as LanchesActions from '../../store/actions/lanches';
+
+import styles from './styles';
+
+class Lanches extends Component {
+  static propTypes = {
+    navigation: PropTypes.shape({}).isRequired,
+    lanches: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+    ingredientes: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+    loading: PropTypes.bool.isRequired,
+    lanchesRequest: PropTypes.func.isRequired,
+    lancheSelect: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
-    this.setState({ loading: true }, async () => {
-      await this.setIngredients();
+    const { lanchesRequest } = this.props;
 
-      const { lanches } = this.state;
-      const lanchesResponse = await api.get("lanches");
-      const lanchesApi = lanchesResponse.data || [];
-
-      lanchesApi.forEach(lanche => {
-        lanche.price = this.calcPreco(lanche);
-      });
-      this.setState({
-        lanches: lanches.concat(lanchesApi),
-        loading: false
-      });
-    });
+    lanchesRequest();
   }
 
-  setIngredients = async () => {
-    const response = await api.get("ingredientes");
-
-    this.setState({ ingredientes: response.data || {} });
-  };
-
-  getIngredients = async lanche => {
+  getIngredients = async (lanche) => {
     const lancheIngredientes = [];
-    const { ingredientes } = this.state;
+    const { ingredientes } = this.props;
 
-    ingredientes.forEach(ingrediente => {
+    ingredientes.forEach((ingrediente) => {
       if (
         lanche.description
           .toLowerCase()
+          .toLowerCase()
           .match(ingrediente.title.toLowerCase()) != null
-      )
+      ) {
         lancheIngredientes.push(ingrediente.id);
+      }
     });
 
     return lancheIngredientes;
   };
 
-  calcPreco = lanche => {
-    const { ingredientes } = this.state;
-    let total = 0;
-    ingredientes.map(ingrediente => {
-      if (
-        lanche.description
-          .toLowerCase()
-          .match(ingrediente.title.toLowerCase()) != null
-      ) {
-        total += ingrediente.price;
-      }
-    });
+  selecionaLanche = async (lanche) => {
+    const { lancheSelect } = this.props;
+    const ingredientes = await this.getIngredients(lanche);
 
-    return total;
-  };
-
-  selecionaLanche = async lanche => {
-    const { navigation } = this.props;
-    lanche.ingredientes = await this.getIngredients(lanche);
-    navigation.navigate("Detalhes", { lanche });
-  };
-
-  closeDetails = () => {
-    this.setState({ modalVisible: false });
+    lancheSelect({ ...lanche, ingredientes });
   };
 
   renderItem = ({ item }) => (
@@ -108,12 +66,10 @@ export default class Lanches extends Component {
 
   renderItemSeparator = () => <View style={styles.itemSeparator} />;
 
-  renderActivityIndicator = () => (
-    <ActivityIndicator size="small" color="#f4511e" />
-  );
+  renderActivityIndicator = () => <ActivityIndicator size="small" color="#f4511e" />;
 
   renderList = () => {
-    const { lanches } = this.state;
+    const { lanches } = this.props;
     return (
       <FlatList
         style={styles.flatList}
@@ -126,7 +82,7 @@ export default class Lanches extends Component {
   };
 
   render() {
-    const { loading } = this.state;
+    const { loading } = this.props;
     return (
       <View style={styles.container}>
         {loading ? this.renderActivityIndicator() : this.renderList()}
@@ -134,3 +90,16 @@ export default class Lanches extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  lanches: state.lanches.data,
+  loading: state.lanches.loading,
+  ingredientes: state.detalhes.ingredientes,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators(LanchesActions, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Lanches);

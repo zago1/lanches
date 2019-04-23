@@ -1,21 +1,20 @@
-import { StyleSheet, StatusBar, Platform } from "react-native";
-
-const statusBarHeight = Platform.OS === "ios" ? StatusBar.currentHeight : 0;
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   flatList: {
+    width: '100%',
     marginTop: 10,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   itemSeparator: {
-    borderBottomColor: "#CCC",
-    borderBottomWidth: 1
-  }
+    borderBottomColor: '#CCC',
+    borderBottomWidth: 1,
+  },
 });
 
 export default styles;
