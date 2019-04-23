@@ -10,15 +10,14 @@ Aplicativo de delivery onde o usuário possui uma lista de lanches para escolher
 
 Arquitetura
 -
-Aplicativo desenvolvido utilizando [React Native](<https://facebook.github.io/react-native/>), com gerenciamento de estado utilizando [Redux](<http://redux.js.org>) e [Redux Saga](<https://redux-saga.js.org/>).
-
-Padrão de Desenvolvimento
--
-Para padronizar o desenvolvimento foi utilizado [eslint do Airbnb](<https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb>) com desenvolvimento focado para dispositivos android.
+Aplicativo desenvolvido utilizando [React Native](<https://facebook.github.io/react-native/>), com gerenciamento de estado utilizando [Redux](<http://redux.js.org>) e [Redux Saga](<https://redux-saga.js.org/>) como Middleware para as requisições do Redux.
+Para padronizar o desenvolvimento foi utilizado o padrão do [Airbnb](<https://github.com/airbnb/javascript/tree/master/packages/eslint-config-airbnb>) utilizando o [EsLint](<https://eslint.org/>) para o controle do código. Também foi utilizado o [Babel](<https://babeljs.io/>).
 
 Utilização
 -
-Para rodar o aplicativo em seu emulador ou dispositivo android, basta entrar na pasta do projeto e executar o comando abaixo:
+Para utilizar o aplicativo, baste realizar o clone do diretório, entrar na pasta do projeto e executar um dos seguintes comandos:
+
+Para dispositivos android:
 
 ```sh
 $ npm android
@@ -28,5 +27,12 @@ ou
 $ yarn android
 ```
 
+Para dispositivos iOS, sendo suportado apenas no MacOS:
 
-
+```sh
+$ npm ios
+```
+ou
+```sh
+$ yarn ios
+```
